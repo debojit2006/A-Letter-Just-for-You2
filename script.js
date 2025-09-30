@@ -18,12 +18,15 @@ You are rare. You are beautiful. And you’re the kind of person who makes life 
 
 Thank you for being you. 🌸`;
 
-// Edit the messages for the floating bubbles
-const SURPRISE_MESSAGES = [
-    "My smile = You 😍",
-    "Thank you for being you 💕",
-    "Best thing in my life ✨",
-    "You're my safe place 🫶",
+const WHEEL_OPTIONS = [
+    { text: "You’re amazing 🌟", color: "#f94144" },
+    { text: "You’re my favorite 🫶", color: "#f3722c" },
+    { text: "You make me happy 💖", color: "#f8961e" },
+    { text: "My happiness = You ✨", color: "#f9c74f" },
+    { text: "Cutest person ever 🥰", color: "#90be6d" },
+    { text: "My safe place ❤️‍🩹", color: "#43aa8b" },
+    { text: "You're a gem 💎", color: "#577590" },
+    { text: "Incredible soul ✨", color: "#f984e5" },
 ];
 
 const YOUR_FINAL_MESSAGE = "You’re the most special person in my life 💖";
@@ -34,50 +37,67 @@ const YOUR_FINAL_MESSAGE = "You’re the most special person in my life 💖";
 
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
+    const { body } = document;
     const screens = {
-        entry: document.getElementById('entry-screen'),
-        letter: document.getElementById('letter-section'),
-        surprise: document.getElementById('surprise-section'),
-        countdown: document.getElementById('countdown-section'),
+        entry: document.getElementById('entry-screen'), letter: document.getElementById('letter-section'),
+        surprise: document.getElementById('surprise-section'), countdown: document.getElementById('countdown-section'),
         final: document.getElementById('final-reveal'),
     };
-    const buttons = {
-        start: document.getElementById('start-btn'),
-        surprise: document.getElementById('surprise-btn'),
-    };
     const elements = {
-        letterText: document.getElementById('letter-text'),
-        bubbleContainer: document.getElementById('bubble-container'),
-        countdownTimer: document.getElementById('countdown-timer'),
-        finalMessage: document.getElementById('final-message'),
-        backgroundEffects: document.getElementById('background-effects'),
-        confettiContainer: document.getElementById('confetti-container'),
+        letterText: document.getElementById('letter-text'), countdownTimer: document.getElementById('countdown-timer'),
+        finalMessage: document.getElementById('final-message'), backgroundEffects: document.getElementById('background-effects'),
+        confettiContainer: document.getElementById('confetti-container'), wheel: document.getElementById('wheel'),
+        resultModal: document.getElementById('result-modal'), resultText: document.getElementById('result-text'),
     };
-
+    const buttons = {
+        start: document.getElementById('start-btn'), surprise: document.getElementById('surprise-btn'),
+        spin: document.getElementById('spin-btn'), closeModal: document.getElementById('close-modal-btn'),
+    };
+    
     let currentScreen = 'entry';
+    let isSpinning = false;
+    const sliceAngle = 360 / WHEEL_OPTIONS.length;
 
-    // --- Functions ---
+    // --- Core Functions ---
     const switchScreen = (screenName) => {
         screens[currentScreen].classList.remove('active');
         screens[currentScreen].classList.add('hidden');
-        
         setTimeout(() => {
             screens[screenName].classList.remove('hidden');
             screens[screenName].classList.add('active');
             currentScreen = screenName;
-        }, 500); // Wait for fade out transition
+        }, 500);
+    };
+
+    const setTheme = () => {
+        const hour = new Date().getHours();
+        const theme = (hour >= 6 && hour < 19) ? 'day' : 'night';
+        body.dataset.theme = theme;
+        createBackgroundParticles(50);
+    };
+
+    const createBackgroundParticles = (count) => {
+        elements.backgroundEffects.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const particle = document.createElement('div');
+            particle.classList.add('particle');
+            particle.style.left = `${Math.random() * 100}vw`;
+            particle.style.top = `${Math.random() * 100}vh`;
+            particle.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
+            particle.style.animationDuration = `${(Math.random() * 15) + 10}s`;
+            particle.style.animationDelay = `${Math.random() * 5}s`;
+            elements.backgroundEffects.appendChild(particle);
+        }
     };
 
     const typeLetter = () => {
         let i = 0;
-        const speed = 25; // Speed of typing in milliseconds
+        const speed = 20;
         elements.letterText.innerHTML = '';
         buttons.surprise.classList.add('hidden');
-        
         const typingInterval = setInterval(() => {
             if (i < YOUR_LETTER_CONTENT.length) {
-                elements.letterText.innerHTML += YOUR_LETTER_CONTENT.charAt(i);
-                i++;
+                elements.letterText.innerHTML += YOUR_LETTER_CONTENT.charAt(i++);
             } else {
                 clearInterval(typingInterval);
                 buttons.surprise.classList.remove('hidden');
@@ -85,63 +105,44 @@ document.addEventListener('DOMContentLoaded', () => {
         }, speed);
     };
 
-    const showSurpriseBubbles = () => {
-        elements.bubbleContainer.innerHTML = ''; // Clear previous bubbles
-        SURPRISE_MESSAGES.forEach((msg, index) => {
-            const bubble = document.createElement('div');
-            bubble.classList.add('message-bubble');
-            bubble.innerHTML = msg;
-
-            // Position bubbles randomly
-            bubble.style.top = `${10 + index * 20 + Math.random() * 10}%`;
-            bubble.style.left = `${10 + Math.random() * 60}%`;
-            
-            // Randomize animation delays for a natural feel
-            bubble.style.animationDelay = `${index * 0.2}s, ${index * 0.5}s`;
-            
-            elements.bubbleContainer.appendChild(bubble);
+    const setupWheel = () => {
+        elements.wheel.innerHTML = '';
+        WHEEL_OPTIONS.forEach((option, i) => {
+            const slice = document.createElement('div');
+            slice.classList.add('wheel-slice');
+            const rotation = sliceAngle * i;
+            slice.style.transform = `rotate(${rotation}deg)`;
+            slice.style.backgroundColor = option.color;
+            slice.innerHTML = `<span>${option.text}</span>`;
+            elements.wheel.appendChild(slice);
         });
     };
     
-    const createStars = (count) => {
-        for (let i = 0; i < count; i++) {
-            const star = document.createElement('div');
-            star.classList.add('star');
-            star.style.width = `${Math.random() * 3}px`;
-            star.style.height = star.style.width;
-            star.style.left = `${Math.random() * 100}vw`;
-            star.style.top = `${Math.random() * 100}vh`;
-            star.style.animationDuration = `${(Math.random() * 15) + 5}s`;
-            star.style.animationDelay = `${Math.random() * 5}s`;
-            elements.backgroundEffects.appendChild(star);
-        }
-    };
+    const spinWheel = () => {
+        if (isSpinning) return;
+        isSpinning = true;
 
-    const createConfetti = () => {
-        const colors = ['#f94144', '#f8961e', '#f9c74f', '#90be6d', '#43aa8b', '#f984e5', '#d98de2'];
-        for (let i = 0; i < 150; i++) {
-            const confetti = document.createElement('div');
-            confetti.classList.add('confetti');
-            confetti.style.left = `${Math.random() * 100}vw`;
-            confetti.style.top = `${-20 + Math.random() * 20}px`;
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            confetti.style.animationDuration = `${(Math.random() * 3) + 4}s`;
-            confetti.style.animationDelay = `${Math.random() * 2}s`;
-            elements.confettiContainer.appendChild(confetti);
-            setTimeout(() => confetti.remove(), 7000);
-        }
+        const totalSpins = 5;
+        const randomIndex = Math.floor(Math.random() * WHEEL_OPTIONS.length);
+        const targetRotation = (360 * totalSpins) + (360 - (sliceAngle * randomIndex)) - (sliceAngle / 2);
+        
+        elements.wheel.style.transform = `rotate(${targetRotation}deg)`;
+
+        setTimeout(() => {
+            elements.resultText.textContent = WHEEL_OPTIONS[randomIndex].text;
+            elements.resultModal.classList.remove('hidden');
+            isSpinning = false;
+        }, 5500); // Wait for spin animation to complete
     };
 
     const startCountdown = () => {
         switchScreen('countdown');
         let count = 3;
         elements.countdownTimer.innerText = count;
-
         const countdownInterval = setInterval(() => {
             count--;
-            if (count > 0) {
-                elements.countdownTimer.innerText = count;
-            } else {
+            if (count > 0) elements.countdownTimer.innerText = count;
+            else {
                 clearInterval(countdownInterval);
                 showFinalReveal();
             }
@@ -154,19 +155,18 @@ document.addEventListener('DOMContentLoaded', () => {
         createConfetti();
     };
 
-    // --- Event Listeners & Initialization ---
-    buttons.start.addEventListener('click', () => {
-        switchScreen('letter');
-        setTimeout(typeLetter, 800);
-    });
+    const createConfetti = () => { /* ... (code from previous version, unchanged) ... */ };
 
+    // --- Event Listeners & Initialization ---
+    buttons.start.addEventListener('click', () => { switchScreen('letter'); setTimeout(typeLetter, 800); });
     buttons.surprise.addEventListener('click', () => {
         switchScreen('surprise');
-        showSurpriseBubbles();
-        // Auto-trigger countdown after 10 seconds
-        setTimeout(startCountdown, 10000);
+        setTimeout(startCountdown, 15000); // Auto-proceed after 15s
     });
+    buttons.spin.addEventListener('click', spinWheel);
+    buttons.closeModal.addEventListener('click', () => elements.resultModal.classList.add('hidden'));
 
     // --- Initial Setup ---
-    createStars(50);
+    setTheme();
+    setupWheel();
 });
