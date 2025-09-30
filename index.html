@@ -3,56 +3,88 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Little Letter For You</title>
+    <title>A Little Letter for You</title>
+    
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
+    
     <link rel="stylesheet" href="style.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="background-effects"></div>
-    <div id="confetti-container"></div>
+    <div id="app-container" class="mood-day">
 
-    <main id="main-content">
-        <section id="entry-screen" class="screen active">
-            <h1>A Little Letter for You 💌</h1>
-            <button id="start-btn">Start Reading</button>
-        </section>
-
-        <section id="letter-section" class="screen hidden">
-            <div class="letter-container">
-                <p id="letter-text"></p>
-            </div>
-            <button id="surprise-btn" class="hidden">See Something Special 🎁</button>
-        </section>
-
-        <section id="surprise-section" class="screen hidden">
-            <h2>Spin the Wheel! 🎡</h2>
-            <div class="wheel-wrapper">
-                <div class="wheel-pointer"></div>
-                <div id="wheel" class="wheel">
+        <div id="entry-screen" class="section active">
+            <div class="content-wrapper">
+                <h1>A Little Letter for You 💌</h1>
+                <div class="card">
+                    <p class="letter-box" id="letter-text"></p>
+                </div>
+                <div id="entry-options" class="options-container">
+                    <div class="options-title">✨ Special Option for You ✨</div>
+                    <div class="mood-buttons">
+                        <button id="mood-day-btn" class="mood-button day active">
+                            <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
+                            <span>Day</span>
+                        </button>
+                        <button id="mood-night-btn" class="mood-button night">
+                           <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
+                            <span>Night</span>
+                        </button>
+                        <button id="mood-favorite-btn" class="mood-button favorite">
+                           <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
+                            <span>Your Favorite</span>
+                        </button>
                     </div>
-            </div>
-            <button id="spin-btn">Spin!</button>
-        </section>
-
-        <section id="countdown-section" class="screen hidden">
-            <h1 id="countdown-timer"></h1>
-        </section>
-
-        <section id="final-reveal" class="screen hidden">
-            <h1 id="final-message"></h1>
-        </section>
-
-        <div id="result-modal" class="hidden">
-            <div class="modal-content">
-                <p id="result-text"></p>
-                <button id="close-modal-btn">Close</button>
+                    <button id="start-reading-btn" class="main-button" style="background: linear-gradient(to right, #fb7185, #f43f5e);">
+                        Start Reading
+                    </button>
+                </div>
             </div>
         </div>
-    </main>
-    
+
+        <div id="surprise-section" class="section">
+            <div class="content-wrapper">
+                <h2>🎁 A Little Surprise 🎁</h2>
+                <div id="fortune-wheel-container">
+                    <div id="wheel-wrapper">
+                        <div id="wheel"></div>
+                        <div id="wheel-center"><div></div></div>
+                        <div id="wheel-pointer"></div>
+                    </div>
+                    <button id="spin-btn" class="main-button" style="background: linear-gradient(to right, #a855f7, #ec4899);">Spin Wheel</button>
+                    <div id="spin-result"></div>
+                </div>
+                <button id="show-bubbles-btn" class="main-button" style="background: linear-gradient(to right, #38bdf8, #a78bfa);">Show Floating Bubbles</button>
+                <div id="bubbles-container" style="display: none;"></div>
+                <button id="surprise-next-btn" class="main-button" style="background: linear-gradient(to right, #fb7185, #f43f5e); display: none;">
+                    Next 
+                    <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
+                </button>
+            </div>
+        </div>
+        
+        <div id="countdown-section" class="section">
+            <div id="countdown-number"></div>
+        </div>
+
+        <div id="grand-reveal-section" class="section">
+            <h1 id="grand-reveal-heading" class="animated-heading">You’re the most special person in my life 💖</h1>
+        </div>
+
+        <div id="birthday-ending-section" class="section">
+            <div class="content-wrapper" style="gap: 2rem;">
+                 <h1 id="birthday-heading" class="animated-heading">🌸✨ HAPPY BIRTHDAY ✨🌸</h1>
+                 <div class="card animate-delay-in delay-1">
+                    <p>I hope this little letter makes your day brighter, just like you make mine every day. ✨</p>
+                 </div>
+                 <button id="replay-btn" class="main-button animate-delay-in delay-2" style="background: linear-gradient(to right, #a855f7, #ec4899);">
+                    <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
+                    Replay Surprise 🎁
+                 </button>
+            </div>
+        </div>
+    </div>
+
     <script src="script.js"></script>
 </body>
 </html>
