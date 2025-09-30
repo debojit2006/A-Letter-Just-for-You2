@@ -1,172 +1,250 @@
-// ===================================================================================
-// ✨ C U S T O M I Z E   H E R E ✨
-// ===================================================================================
-
-const YOUR_LETTER_CONTENT = `My Letter to You 💌
-
-We’ve been talking over chat for around two years now, and every single conversation has been a quiet little part of my day that I’ve looked forward to. From the very first time we exchanged words, I felt something special — like I was speaking to someone who was not just kind, but genuinely rare.
-
-And now, after all this time, finally hearing your voice on a call… it’s hard to explain what that felt like. You have one of the nicest voices I’ve ever heard — soft yet confident, warm yet honest. It’s the kind of voice that stays with you even after the call ends. It made me smile in a way I didn’t expect.
-
-You’re so pretty — and I don’t just mean in the obvious way, but in the way you carry yourself, the way you laugh, the way you choose your words. There’s a brightness about you that feels real, not just something on the surface.
-
-I don’t know how you feel about hearing this, but you should know: you’re one of the best people I’ve ever met in my life till now. In a world full of people rushing past each other, you’ve been someone who made me pause, think, and smile. You’ve been patient when I was scattered, funny when I was serious, and kind when I didn’t even know I needed kindness.
-
-There’s a depth to you that I admire so much — how you care about things, how you listen, how you stay true to yourself. And I want you to know that no matter what happens, I’ll always remember these conversations, your laughter, your honesty, and the way you’ve made me feel less alone.
-
-You are rare. You are beautiful. And you’re the kind of person who makes life feel a little more like a story worth telling.
-
-Thank you for being you. 🌸`;
-
-const WHEEL_OPTIONS = [
-    { text: "You’re amazing 🌟", color: "#f94144" },
-    { text: "You’re my favorite 🫶", color: "#f3722c" },
-    { text: "You make me happy 💖", color: "#f8961e" },
-    { text: "My happiness = You ✨", color: "#f9c74f" },
-    { text: "Cutest person ever 🥰", color: "#90be6d" },
-    { text: "My safe place ❤️‍🩹", color: "#43aa8b" },
-    { text: "You're a gem 💎", color: "#577590" },
-    { text: "Incredible soul ✨", color: "#f984e5" },
-];
-
-const YOUR_FINAL_MESSAGE = "You’re the most special person in my life 💖";
-
-// ===================================================================================
-// ✨ E N D   O F   C U S T O M I Z A T I O N ✨
-// ===================================================================================
-
 document.addEventListener('DOMContentLoaded', () => {
     // --- DOM Elements ---
-    const { body } = document;
-    const screens = {
-        entry: document.getElementById('entry-screen'), letter: document.getElementById('letter-section'),
-        surprise: document.getElementById('surprise-section'), countdown: document.getElementById('countdown-section'),
-        final: document.getElementById('final-reveal'),
-    };
-    const elements = {
-        letterText: document.getElementById('letter-text'), countdownTimer: document.getElementById('countdown-timer'),
-        finalMessage: document.getElementById('final-message'), backgroundEffects: document.getElementById('background-effects'),
-        confettiContainer: document.getElementById('confetti-container'), wheel: document.getElementById('wheel'),
-        resultModal: document.getElementById('result-modal'), resultText: document.getElementById('result-text'),
-    };
-    const buttons = {
-        start: document.getElementById('start-btn'), surprise: document.getElementById('surprise-btn'),
-        spin: document.getElementById('spin-btn'), closeModal: document.getElementById('close-modal-btn'),
-    };
+    const appContainer = document.getElementById('app-container');
+    const sections = document.querySelectorAll('.section');
+
+    // Entry Screen
+    const letterTextEl = document.getElementById('letter-text');
+    const entryOptionsEl = document.getElementById('entry-options');
+    const moodDayBtn = document.getElementById('mood-day-btn');
+    const moodNightBtn = document.getElementById('mood-night-btn');
+    const moodFavoriteBtn = document.getElementById('mood-favorite-btn');
+    const startReadingBtn = document.getElementById('start-reading-btn');
+
+    // Surprise Section
+    const wheel = document.getElementById('wheel');
+    const spinBtn = document.getElementById('spin-btn');
+    const spinResultEl = document.getElementById('spin-result');
+    const showBubblesBtn = document.getElementById('show-bubbles-btn');
+    const bubblesContainer = document.getElementById('bubbles-container');
+    const surpriseNextBtn = document.getElementById('surprise-next-btn');
+
+    // Countdown Section
+    const countdownNumberEl = document.getElementById('countdown-number');
     
-    let currentScreen = 'entry';
-    let isSpinning = false;
-    const sliceAngle = 360 / WHEEL_OPTIONS.length;
+    // Birthday Ending
+    const replayBtn = document.getElementById('replay-btn');
 
-    // --- Core Functions ---
-    const switchScreen = (screenName) => {
-        screens[currentScreen].classList.remove('active');
-        screens[currentScreen].classList.add('hidden');
-        setTimeout(() => {
-            screens[screenName].classList.remove('hidden');
-            screens[screenName].classList.add('active');
-            currentScreen = screenName;
-        }, 500);
-    };
 
-    const setTheme = () => {
-        const hour = new Date().getHours();
-        const theme = (hour >= 6 && hour < 19) ? 'day' : 'night';
-        body.dataset.theme = theme;
-        createBackgroundParticles(50);
-    };
+    // --- State ---
+    let currentSection = 'entry';
+    let currentMood = 'day';
+    let typingInterval;
 
-    const createBackgroundParticles = (count) => {
-        elements.backgroundEffects.innerHTML = '';
-        for (let i = 0; i < count; i++) {
-            const particle = document.createElement('div');
-            particle.classList.add('particle');
-            particle.style.left = `${Math.random() * 100}vw`;
-            particle.style.top = `${Math.random() * 100}vh`;
-            particle.style.transform = `scale(${Math.random() * 0.5 + 0.5})`;
-            particle.style.animationDuration = `${(Math.random() * 15) + 10}s`;
-            particle.style.animationDelay = `${Math.random() * 5}s`;
-            elements.backgroundEffects.appendChild(particle);
+    // --- Data & Constants ---
+    const letterFullText = `Dear You,\n\nWe’ve been talking over chat for around two years now, and every single conversation has been a quiet little part of my day that I’ve looked forward to. From the very first time we exchanged words, I felt something special — like I was speaking to someone who was not just kind, but genuinely rare.\n\nAnd now, after all this time, finally hearing your voice on a call… it’s hard to explain what that felt like. You have one of the nicest voices I’ve ever heard — soft yet confident, warm yet honest. It’s the kind of voice that stays with you even after the call ends. It made me smile in a way I didn’t expect.\n\nYou’re so pretty — and I don’t just mean in the obvious way, but in the way you carry yourself, the way you laugh, the way you choose your words. There’s a brightness about you that feels real, not just something on the surface.\n\nYou should know: you’re one of the best people I’ve ever met in my life till now. In a world full of people rushing past each other, you’ve been someone who made me pause, think, and smile.\n\nThank you for being you. 🌸`;
+    
+    const wheelPhrases = [
+        { text: 'You make me happy 💖', color: '#FFB6C1' },
+        { text: "You're my favorite 🫶", color: '#DDA0DD' },
+        { text: "You're the best 🌟", color: '#87CEEB' },
+        { text: 'You light up my world ✨', color: '#FFE4B5' },
+        { text: 'You are amazing 💕', color: '#F0E68C' },
+        { text: 'You inspire me 🌈', color: '#98FB98' },
+    ];
+
+    const bubbleMessages = [
+        'You are so nice 💕', 'You are so beautiful 🌸', 'You brighten my day ☀️', 
+        'You are wonderful 🌟', 'You are precious 💎', 'You are lovely 🌺'
+    ];
+
+    // --- Functions ---
+
+    const showSection = (sectionId) => {
+        currentSection = sectionId;
+        sections.forEach(section => {
+            section.classList.toggle('active', section.id === sectionId);
+        });
+        
+        // Trigger section-specific logic
+        switch (sectionId) {
+            case 'countdown':
+                startCountdown();
+                break;
+            case 'grand-reveal-section':
+                triggerConfetti(4000);
+                createFloatingPetals();
+                setTimeout(() => showSection('birthday-ending-section'), 5000);
+                break;
+            case 'birthday-ending-section':
+                triggerConfetti(4000);
+                createFloatingPetals();
+                break;
         }
     };
+    
+    const startTypingEffect = () => {
+        let index = 0;
+        letterTextEl.innerHTML = '<span class="typing-cursor"></span>';
+        if (typingInterval) clearInterval(typingInterval);
 
-    const typeLetter = () => {
-        let i = 0;
-        const speed = 20;
-        elements.letterText.innerHTML = '';
-        buttons.surprise.classList.add('hidden');
-        const typingInterval = setInterval(() => {
-            if (i < YOUR_LETTER_CONTENT.length) {
-                elements.letterText.innerHTML += YOUR_LETTER_CONTENT.charAt(i++);
+        typingInterval = setInterval(() => {
+            if (index < letterFullText.length) {
+                const textToShow = letterFullText.slice(0, index + 1);
+                letterTextEl.innerHTML = `${textToShow}<span class="typing-cursor"></span>`;
+                index++;
             } else {
                 clearInterval(typingInterval);
-                buttons.surprise.classList.remove('hidden');
+                letterTextEl.innerHTML = letterFullText; // Remove cursor
+                entryOptionsEl.classList.add('visible');
             }
-        }, speed);
+        }, 30);
     };
 
-    const setupWheel = () => {
-        elements.wheel.innerHTML = '';
-        WHEEL_OPTIONS.forEach((option, i) => {
+    const setMood = (mood) => {
+        currentMood = mood;
+        appContainer.className = `mood-${mood}`;
+        [moodDayBtn, moodNightBtn, moodFavoriteBtn].forEach(btn => btn.classList.remove('active'));
+        document.getElementById(`mood-${mood}-btn`).classList.add('active');
+    };
+
+    const buildWheel = () => {
+        const sliceCount = wheelPhrases.length;
+        const sliceAngle = 360 / sliceCount;
+        wheel.innerHTML = '';
+        wheelPhrases.forEach((phrase, i) => {
             const slice = document.createElement('div');
-            slice.classList.add('wheel-slice');
-            const rotation = sliceAngle * i;
-            slice.style.transform = `rotate(${rotation}deg)`;
-            slice.style.backgroundColor = option.color;
-            slice.innerHTML = `<span>${option.text}</span>`;
-            elements.wheel.appendChild(slice);
+            slice.className = 'wheel-slice';
+            const innerSlice = document.createElement('div');
+            innerSlice.className = 'wheel-slice-inner';
+            
+            slice.style.transform = `rotate(${sliceAngle * i}deg)`;
+            innerSlice.style.backgroundColor = phrase.color;
+            innerSlice.style.transform = `rotate(${sliceAngle / 2}deg)`;
+            
+            slice.appendChild(innerSlice);
+            wheel.appendChild(slice);
         });
     };
-    
-    const spinWheel = () => {
-        if (isSpinning) return;
-        isSpinning = true;
 
-        const totalSpins = 5;
-        const randomIndex = Math.floor(Math.random() * WHEEL_OPTIONS.length);
-        const targetRotation = (360 * totalSpins) + (360 - (sliceAngle * randomIndex)) - (sliceAngle / 2);
-        
-        elements.wheel.style.transform = `rotate(${targetRotation}deg)`;
+    const spinWheel = () => {
+        if (spinBtn.disabled) return;
+        spinBtn.disabled = true;
+        spinBtn.textContent = 'Spinning...';
+        spinResultEl.style.display = 'none';
+
+        const randomIndex = Math.floor(Math.random() * wheelPhrases.length);
+        const extraSpins = 5;
+        const targetRotation = (360 * extraSpins) + (randomIndex * (360 / wheelPhrases.length) * -1);
+
+        wheel.style.transform = `rotate(${targetRotation}deg)`;
 
         setTimeout(() => {
-            elements.resultText.textContent = WHEEL_OPTIONS[randomIndex].text;
-            elements.resultModal.classList.remove('hidden');
-            isSpinning = false;
-        }, 5500); // Wait for spin animation to complete
+            spinResultEl.textContent = wheelPhrases[randomIndex].text;
+            spinResultEl.style.display = 'block';
+            spinBtn.disabled = false;
+            spinBtn.textContent = 'Spin Wheel';
+            surpriseNextBtn.style.display = 'flex';
+        }, 3000);
     };
 
     const startCountdown = () => {
-        switchScreen('countdown');
         let count = 3;
-        elements.countdownTimer.innerText = count;
-        const countdownInterval = setInterval(() => {
-            count--;
-            if (count > 0) elements.countdownTimer.innerText = count;
-            else {
-                clearInterval(countdownInterval);
-                showFinalReveal();
+        const updateCount = () => {
+            if (count > 0) {
+                countdownNumberEl.textContent = count;
+                countdownNumberEl.style.animation = 'none';
+                void countdownNumberEl.offsetWidth; // Trigger reflow
+                countdownNumberEl.style.animation = 'countdown-zoom 1s ease-in-out forwards';
+                count--;
+                setTimeout(updateCount, 1000);
+            } else {
+                setTimeout(() => showSection('grand-reveal-section'), 500);
             }
-        }, 1200);
+        };
+        updateCount();
     };
 
-    const showFinalReveal = () => {
-        elements.finalMessage.innerText = YOUR_FINAL_MESSAGE;
-        switchScreen('final');
-        createConfetti();
+    const createFloatingBubbles = () => {
+        bubblesContainer.style.display = 'block';
+        bubblesContainer.innerHTML = '';
+        bubbleMessages.forEach((msg, i) => {
+            const bubble = document.createElement('div');
+            bubble.className = 'floating-bubble';
+            bubble.textContent = msg;
+            bubble.style.left = `${10 + (i * 15)}%`;
+            bubble.style.animationDuration = '8s';
+            bubble.style.animationDelay = `${i * 0.5}s`;
+            bubblesContainer.appendChild(bubble);
+        });
     };
 
-    const createConfetti = () => { /* ... (code from previous version, unchanged) ... */ };
+    const triggerConfetti = (duration) => {
+        const container = appContainer;
+        const colors = ['#FFB6C1', '#DDA0DD', '#87CEEB', '#FFE4B5', '#98FB98', '#FF69B4'];
+        for (let i = 0; i < 50; i++) {
+            const confetti = document.createElement('div');
+            confetti.className = 'confetti-piece';
+            confetti.style.left = `${Math.random() * 100}%`;
+            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
+            const animDuration = 2 + Math.random() * 2;
+            confetti.style.animationDuration = `${animDuration}s`;
+            confetti.style.animationDelay = `${Math.random() * 0.5}s`;
+            confetti.style.animationIterationCount = '1';
+            confetti.style.animationFillMode = 'forwards';
+            container.appendChild(confetti);
+            setTimeout(() => confetti.remove(), animDuration * 1000 + 500);
+        }
+    };
 
-    // --- Event Listeners & Initialization ---
-    buttons.start.addEventListener('click', () => { switchScreen('letter'); setTimeout(typeLetter, 800); });
-    buttons.surprise.addEventListener('click', () => {
-        switchScreen('surprise');
-        setTimeout(startCountdown, 15000); // Auto-proceed after 15s
+    const createFloatingPetals = () => {
+        const container = appContainer;
+        const emojis = ['🌸', '💖', '🌺', '💕', '🌷'];
+        for (let i = 0; i < 20; i++) {
+            const petal = document.createElement('div');
+            petal.className = 'petal';
+            petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
+            petal.style.left = `${Math.random() * 100}%`;
+            const animDuration = 4 + Math.random() * 3;
+            petal.style.animationDuration = `${animDuration}s`;
+            petal.style.animationDelay = `${Math.random() * 2}s`;
+            
+            petal.style.animationName = 'fall';
+            petal.style.animationTimingFunction = 'linear';
+            petal.style.animationIterationCount = 'infinite';
+            
+            // Stagger opacity animation via JS
+            petal.style.transition = `opacity ${animDuration / 4}s linear`;
+            setTimeout(() => {
+                petal.style.opacity = '1';
+            }, (Math.random() * 2) * 1000);
+
+            container.appendChild(petal);
+        }
+    };
+    
+    const resetApp = () => {
+        document.querySelectorAll('.petal, .confetti-piece').forEach(el => el.remove());
+        setMood('day');
+        spinResultEl.style.display = 'none';
+        surpriseNextBtn.style.display = 'none';
+        bubblesContainer.style.display = 'none';
+        bubblesContainer.innerHTML = '';
+        showBubblesBtn.style.display = 'block';
+        wheel.style.transform = 'rotate(0deg)';
+        entryOptionsEl.classList.remove('visible');
+        
+        showSection('entry-screen');
+        startTypingEffect();
+    };
+
+    // --- Event Listeners ---
+    moodDayBtn.addEventListener('click', () => setMood('day'));
+    moodNightBtn.addEventListener('click', () => setMood('night'));
+    moodFavoriteBtn.addEventListener('click', () => setMood('favorite'));
+    startReadingBtn.addEventListener('click', () => showSection('surprise-section'));
+
+    spinBtn.addEventListener('click', spinWheel);
+    showBubblesBtn.addEventListener('click', () => {
+        createFloatingBubbles();
+        showBubblesBtn.style.display = 'none';
     });
-    buttons.spin.addEventListener('click', spinWheel);
-    buttons.closeModal.addEventListener('click', () => elements.resultModal.classList.add('hidden'));
+    surpriseNextBtn.addEventListener('click', () => showSection('countdown-section'));
+    
+    replayBtn.addEventListener('click', resetApp);
 
-    // --- Initial Setup ---
-    setTheme();
-    setupWheel();
+
+    // --- Initialization ---
+    buildWheel();
+    startTypingEffect();
 });
