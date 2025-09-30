@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>A Little Letter For You</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+<body>
+
+    <div id="background-effects"></div>
+    <div id="confetti-container"></div>
+
+    <main id="main-content">
+        <section id="entry-screen" class="screen active">
+            <h1>A Little Letter for You 💌</h1>
+            <button id="start-btn">Start Reading</button>
+        </section>
+
+        <section id="letter-section" class="screen hidden">
+            <div class="letter-container">
+                <p id="letter-text"></p>
+            </div>
+            <button id="surprise-btn" class="hidden">See Something Special 🎁</button>
+        </section>
+
+        <section id="surprise-section" class="screen hidden">
+             <h2>A few thoughts...</h2>
+            <div id="bubble-container">
+                </div>
+        </section>
+
+        <section id="countdown-section" class="screen hidden">
+            <h1 id="countdown-timer"></h1>
+        </section>
+
+        <section id="final-reveal" class="screen hidden">
+            <h1 id="final-message"></h1>
+        </section>
+    </main>
+    
+    <script src="script.js"></script>
+</body>
+</html>
