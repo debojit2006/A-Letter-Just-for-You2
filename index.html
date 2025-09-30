@@ -28,9 +28,13 @@
         </section>
 
         <section id="surprise-section" class="screen hidden">
-             <h2>A few thoughts...</h2>
-            <div id="bubble-container">
-                </div>
+            <h2>Spin the Wheel! 🎡</h2>
+            <div class="wheel-wrapper">
+                <div class="wheel-pointer"></div>
+                <div id="wheel" class="wheel">
+                    </div>
+            </div>
+            <button id="spin-btn">Spin!</button>
         </section>
 
         <section id="countdown-section" class="screen hidden">
@@ -40,6 +44,13 @@
         <section id="final-reveal" class="screen hidden">
             <h1 id="final-message"></h1>
         </section>
+
+        <div id="result-modal" class="hidden">
+            <div class="modal-content">
+                <p id="result-text"></p>
+                <button id="close-modal-btn">Close</button>
+            </div>
+        </div>
     </main>
     
     <script src="script.js"></script>
