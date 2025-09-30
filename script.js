@@ -1,250 +1,183 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // --- DOM Elements ---
-    const appContainer = document.getElementById('app-container');
-    const sections = document.querySelectorAll('.section');
+    // --- State Management ---
+    const screens = ['entry', 'surprise', 'countdown', 'reveal', 'birthday'];
+    let currentScreen = 'entry';
 
-    // Entry Screen
-    const letterTextEl = document.getElementById('letter-text');
-    const entryOptionsEl = document.getElementById('entry-options');
-    const moodDayBtn = document.getElementById('mood-day-btn');
-    const moodNightBtn = document.getElementById('mood-night-btn');
-    const moodFavoriteBtn = document.getElementById('mood-favorite-btn');
-    const startReadingBtn = document.getElementById('start-reading-btn');
+    // --- Element Selectors ---
+    const getEl = (id) => document.getElementById(id);
+    const entryScreen = getEl('entry-screen');
+    const surpriseScreen = getEl('surprise-screen');
+    const countdownScreen = getEl('countdown-screen');
+    const revealScreen = getEl('reveal-screen');
+    const birthdayScreen = getEl('birthday-screen');
 
-    // Surprise Section
-    const wheel = document.getElementById('wheel');
-    const spinBtn = document.getElementById('spin-btn');
-    const spinResultEl = document.getElementById('spin-result');
-    const showBubblesBtn = document.getElementById('show-bubbles-btn');
-    const bubblesContainer = document.getElementById('bubbles-container');
-    const surpriseNextBtn = document.getElementById('surprise-next-btn');
-
-    // Countdown Section
-    const countdownNumberEl = document.getElementById('countdown-number');
-    
-    // Birthday Ending
-    const replayBtn = document.getElementById('replay-btn');
-
-
-    // --- State ---
-    let currentSection = 'entry';
-    let currentMood = 'day';
-    let typingInterval;
-
-    // --- Data & Constants ---
-    const letterFullText = `Dear You,\n\nWe’ve been talking over chat for around two years now, and every single conversation has been a quiet little part of my day that I’ve looked forward to. From the very first time we exchanged words, I felt something special — like I was speaking to someone who was not just kind, but genuinely rare.\n\nAnd now, after all this time, finally hearing your voice on a call… it’s hard to explain what that felt like. You have one of the nicest voices I’ve ever heard — soft yet confident, warm yet honest. It’s the kind of voice that stays with you even after the call ends. It made me smile in a way I didn’t expect.\n\nYou’re so pretty — and I don’t just mean in the obvious way, but in the way you carry yourself, the way you laugh, the way you choose your words. There’s a brightness about you that feels real, not just something on the surface.\n\nYou should know: you’re one of the best people I’ve ever met in my life till now. In a world full of people rushing past each other, you’ve been someone who made me pause, think, and smile.\n\nThank you for being you. 🌸`;
-    
-    const wheelPhrases = [
-        { text: 'You make me happy 💖', color: '#FFB6C1' },
-        { text: "You're my favorite 🫶", color: '#DDA0DD' },
-        { text: "You're the best 🌟", color: '#87CEEB' },
-        { text: 'You light up my world ✨', color: '#FFE4B5' },
-        { text: 'You are amazing 💕', color: '#F0E68C' },
-        { text: 'You inspire me 🌈', color: '#98FB98' },
-    ];
-
-    const bubbleMessages = [
-        'You are so nice 💕', 'You are so beautiful 🌸', 'You brighten my day ☀️', 
-        'You are wonderful 🌟', 'You are precious 💎', 'You are lovely 🌺'
-    ];
-
-    // --- Functions ---
-
-    const showSection = (sectionId) => {
-        currentSection = sectionId;
-        sections.forEach(section => {
-            section.classList.toggle('active', section.id === sectionId);
+    // --- Screen Transition Logic ---
+    function showScreen(screenName) {
+        screens.forEach(id => {
+            const screen = getEl(`${id}-screen`);
+            screen.classList.remove('active');
         });
+        const activeScreen = getEl(`${screenName}-screen`);
+        activeScreen.classList.add('active');
+        currentScreen = screenName;
         
-        // Trigger section-specific logic
-        switch (sectionId) {
-            case 'countdown':
-                startCountdown();
-                break;
-            case 'grand-reveal-section':
-                triggerConfetti(4000);
-                createFloatingPetals();
-                setTimeout(() => showSection('birthday-ending-section'), 5000);
-                break;
-            case 'birthday-ending-section':
-                triggerConfetti(4000);
-                createFloatingPetals();
-                break;
+        // Initialize screen-specific logic
+        switch (screenName) {
+            case 'entry': initEntryScreen(); break;
+            case 'surprise': initSurpriseScreen(); break;
+            case 'countdown': initCountdownScreen(); break;
+            case 'reveal': initRevealScreen(); break;
+            case 'birthday': initBirthdayScreen(); break;
         }
-    };
-    
-    const startTypingEffect = () => {
-        let index = 0;
-        letterTextEl.innerHTML = '<span class="typing-cursor"></span>';
-        if (typingInterval) clearInterval(typingInterval);
+    }
 
-        typingInterval = setInterval(() => {
-            if (index < letterFullText.length) {
-                const textToShow = letterFullText.slice(0, index + 1);
-                letterTextEl.innerHTML = `${textToShow}<span class="typing-cursor"></span>`;
-                index++;
+    // --- Entry Screen Logic ---
+    function initEntryScreen() {
+        const letterTextEl = getEl('letter-text');
+        const startReadingBtn = getEl('start-reading-btn');
+        const dayBtn = getEl('day-btn');
+        const nightBtn = getEl('night-btn');
+        
+        const letterText = "We've been talking over chat for around two years now, and every single conversation has been a quiet little part of my day that I've looked forward to. From the very first time we exchanged words, I felt something special — like I was speaking to someone who was not just kind, but genuinely rare. And now, after all this time, finally hearing your voice on a call… it's hard to explain what that felt like. You have one of the nicest voices I've ever heard — soft yet confident, warm yet honest. It's the kind of voice that stays with you even after the call ends. It made me smile in a way I didn't expect. You're so pretty — and I don't just mean in the obvious way, but in the way you carry yourself, the way you laugh, the way you choose your words. There's a brightness about you that feels real, not just something on the surface. I don't know how you feel about hearing this, but you should know: you're one of the best people I've ever met in my life till now. In a world full of people rushing past each other, you've been someone who made me pause, think, and smile. You've been patient when I was scattered, funny when I was serious, and kind when I didn't even know I needed kindness. There's a depth to you that I admire so much — how you care about things, how you listen, how you stay true to yourself. And I want you to know that no matter what happens, I'll always remember these conversations, your laughter, your honesty, and the way you've made me feel less alone. You are rare. You are beautiful. And you're the kind of person who makes life feel a little more like a story worth telling. Thank you for being you. 🌸";
+        let i = 0;
+        
+        letterTextEl.innerHTML = '';
+        startReadingBtn.disabled = true;
+
+        function typeWriter() {
+            if (i < letterText.length) {
+                letterTextEl.innerHTML = letterText.substring(0, i + 1) + '<span class="typing-cursor"></span>';
+                i++;
+                setTimeout(typeWriter, 30);
             } else {
-                clearInterval(typingInterval);
-                letterTextEl.innerHTML = letterFullText; // Remove cursor
-                entryOptionsEl.classList.add('visible');
+                letterTextEl.querySelector('.typing-cursor').remove();
+                startReadingBtn.disabled = false;
             }
-        }, 30);
-    };
+        }
+        
+        typeWriter();
 
-    const setMood = (mood) => {
-        currentMood = mood;
-        appContainer.className = `mood-${mood}`;
-        [moodDayBtn, moodNightBtn, moodFavoriteBtn].forEach(btn => btn.classList.remove('active'));
-        document.getElementById(`mood-${mood}-btn`).classList.add('active');
-    };
+        dayBtn.onclick = () => {
+            entryScreen.className = 'screen active day-theme';
+            dayBtn.classList.add('active');
+            nightBtn.classList.remove('active');
+        };
+        nightBtn.onclick = () => {
+            entryScreen.className = 'screen active night-theme';
+            nightBtn.classList.add('active');
+            dayBtn.classList.remove('active');
+        };
 
-    const buildWheel = () => {
-        const sliceCount = wheelPhrases.length;
-        const sliceAngle = 360 / sliceCount;
-        wheel.innerHTML = '';
-        wheelPhrases.forEach((phrase, i) => {
-            const slice = document.createElement('div');
-            slice.className = 'wheel-slice';
-            const innerSlice = document.createElement('div');
-            innerSlice.className = 'wheel-slice-inner';
-            
-            slice.style.transform = `rotate(${sliceAngle * i}deg)`;
-            innerSlice.style.backgroundColor = phrase.color;
-            innerSlice.style.transform = `rotate(${sliceAngle / 2}deg)`;
-            
-            slice.appendChild(innerSlice);
-            wheel.appendChild(slice);
+        startReadingBtn.onclick = () => showScreen('surprise');
+    }
+
+    // --- Surprise Screen Logic ---
+    function initSurpriseScreen() {
+        // Fortune Wheel
+        const wheel = getEl('wheel');
+        const wheelColors = ['#ec4899', '#a855f7', '#3b82f6', '#10b981', '#f59e0b', '#ef4444'];
+        let currentRotation = 0;
+        
+        wheel.innerHTML = wheelColors.map((color, index) =>
+            `<div class="wheel-segment" style="background-color: ${color}; transform: rotate(${index * 60}deg);"></div>`
+        ).join('');
+        
+        wheel.onclick = () => {
+            const spins = 5 + Math.random() * 5;
+            currentRotation += spins * 360;
+            wheel.style.transform = `rotate(${currentRotation}deg)`;
+        };
+
+        // Balloon Game
+        const balloonBox = getEl('balloon-box');
+        const balloonNotes = ["You're amazing 💕", "Cutest smile 🌸", "Best person ever 🌟", "So beautiful 💖", "You're rare 🦋", "Pure sunshine ☀️"];
+        
+        balloonBox.innerHTML = '';
+        balloonNotes.forEach((note, index) => {
+            const balloon = document.createElement('div');
+            balloon.className = 'balloon';
+            balloon.innerHTML = `<div class="balloon-body"></div><div class="balloon-string"></div>`;
+            balloon.style.left = `${10 + index * 15}%`;
+            balloon.style.animationDelay = `${index * 1}s`;
+
+            balloon.onclick = () => {
+                balloon.remove();
+                const poppedNote = document.createElement('div');
+                poppedNote.className = 'popped-note';
+                poppedNote.textContent = note;
+                poppedNote.style.left = `${15 + (Math.random() * 70)}%`;
+                poppedNote.style.top = `${20 + (Math.random() * 60)}%`;
+                balloonBox.appendChild(poppedNote);
+            };
+            balloonBox.appendChild(balloon);
         });
-    };
 
-    const spinWheel = () => {
-        if (spinBtn.disabled) return;
-        spinBtn.disabled = true;
-        spinBtn.textContent = 'Spinning...';
-        spinResultEl.style.display = 'none';
+        // Hidden Lock
+        const lockBtn = getEl('hidden-lock-btn');
+        const modal = getEl('hidden-note-modal');
+        lockBtn.onclick = () => modal.classList.remove('hidden');
+        modal.onclick = () => modal.classList.add('hidden');
+        
+        getEl('surprise-continue-btn').onclick = () => showScreen('countdown');
+    }
 
-        const randomIndex = Math.floor(Math.random() * wheelPhrases.length);
-        const extraSpins = 5;
-        const targetRotation = (360 * extraSpins) + (randomIndex * (360 / wheelPhrases.length) * -1);
-
-        wheel.style.transform = `rotate(${targetRotation}deg)`;
-
-        setTimeout(() => {
-            spinResultEl.textContent = wheelPhrases[randomIndex].text;
-            spinResultEl.style.display = 'block';
-            spinBtn.disabled = false;
-            spinBtn.textContent = 'Spin Wheel';
-            surpriseNextBtn.style.display = 'flex';
-        }, 3000);
-    };
-
-    const startCountdown = () => {
+    // --- Countdown Screen Logic ---
+    function initCountdownScreen() {
+        const countdownNumberEl = getEl('countdown-number');
         let count = 3;
-        const updateCount = () => {
+        countdownNumberEl.textContent = count;
+
+        const interval = setInterval(() => {
+            count--;
             if (count > 0) {
                 countdownNumberEl.textContent = count;
+                // Re-trigger animation
                 countdownNumberEl.style.animation = 'none';
-                void countdownNumberEl.offsetWidth; // Trigger reflow
-                countdownNumberEl.style.animation = 'countdown-zoom 1s ease-in-out forwards';
-                count--;
-                setTimeout(updateCount, 1000);
+                countdownNumberEl.offsetHeight; /* trigger reflow */
+                countdownNumberEl.style.animation = null; 
             } else {
-                setTimeout(() => showSection('grand-reveal-section'), 500);
+                clearInterval(interval);
+                setTimeout(() => showScreen('reveal'), 1000);
             }
-        };
-        updateCount();
-    };
-
-    const createFloatingBubbles = () => {
-        bubblesContainer.style.display = 'block';
-        bubblesContainer.innerHTML = '';
-        bubbleMessages.forEach((msg, i) => {
-            const bubble = document.createElement('div');
-            bubble.className = 'floating-bubble';
-            bubble.textContent = msg;
-            bubble.style.left = `${10 + (i * 15)}%`;
-            bubble.style.animationDuration = '8s';
-            bubble.style.animationDelay = `${i * 0.5}s`;
-            bubblesContainer.appendChild(bubble);
-        });
-    };
-
-    const triggerConfetti = (duration) => {
-        const container = appContainer;
-        const colors = ['#FFB6C1', '#DDA0DD', '#87CEEB', '#FFE4B5', '#98FB98', '#FF69B4'];
-        for (let i = 0; i < 50; i++) {
-            const confetti = document.createElement('div');
-            confetti.className = 'confetti-piece';
-            confetti.style.left = `${Math.random() * 100}%`;
-            confetti.style.backgroundColor = colors[Math.floor(Math.random() * colors.length)];
-            const animDuration = 2 + Math.random() * 2;
-            confetti.style.animationDuration = `${animDuration}s`;
-            confetti.style.animationDelay = `${Math.random() * 0.5}s`;
-            confetti.style.animationIterationCount = '1';
-            confetti.style.animationFillMode = 'forwards';
-            container.appendChild(confetti);
-            setTimeout(() => confetti.remove(), animDuration * 1000 + 500);
-        }
-    };
-
-    const createFloatingPetals = () => {
-        const container = appContainer;
-        const emojis = ['🌸', '💖', '🌺', '💕', '🌷'];
-        for (let i = 0; i < 20; i++) {
-            const petal = document.createElement('div');
-            petal.className = 'petal';
-            petal.textContent = emojis[Math.floor(Math.random() * emojis.length)];
-            petal.style.left = `${Math.random() * 100}%`;
-            const animDuration = 4 + Math.random() * 3;
-            petal.style.animationDuration = `${animDuration}s`;
-            petal.style.animationDelay = `${Math.random() * 2}s`;
-            
-            petal.style.animationName = 'fall';
-            petal.style.animationTimingFunction = 'linear';
-            petal.style.animationIterationCount = 'infinite';
-            
-            // Stagger opacity animation via JS
-            petal.style.transition = `opacity ${animDuration / 4}s linear`;
-            setTimeout(() => {
-                petal.style.opacity = '1';
-            }, (Math.random() * 2) * 1000);
-
-            container.appendChild(petal);
-        }
-    };
+        }, 1000);
+    }
     
-    const resetApp = () => {
-        document.querySelectorAll('.petal, .confetti-piece').forEach(el => el.remove());
-        setMood('day');
-        spinResultEl.style.display = 'none';
-        surpriseNextBtn.style.display = 'none';
-        bubblesContainer.style.display = 'none';
-        bubblesContainer.innerHTML = '';
-        showBubblesBtn.style.display = 'block';
-        wheel.style.transform = 'rotate(0deg)';
-        entryOptionsEl.classList.remove('visible');
-        
-        showSection('entry-screen');
-        startTypingEffect();
-    };
-
-    // --- Event Listeners ---
-    moodDayBtn.addEventListener('click', () => setMood('day'));
-    moodNightBtn.addEventListener('click', () => setMood('night'));
-    moodFavoriteBtn.addEventListener('click', () => setMood('favorite'));
-    startReadingBtn.addEventListener('click', () => showSection('surprise-section'));
-
-    spinBtn.addEventListener('click', spinWheel);
-    showBubblesBtn.addEventListener('click', () => {
-        createFloatingBubbles();
-        showBubblesBtn.style.display = 'none';
-    });
-    surpriseNextBtn.addEventListener('click', () => showSection('countdown-section'));
+    // --- Grand Reveal Screen Logic ---
+    function initRevealScreen() {
+        createDynamicElements(revealScreen.querySelector('.background-elements'), 100, 'confetti');
+        getEl('reveal-continue-btn').onclick = () => showScreen('birthday');
+    }
     
-    replayBtn.addEventListener('click', resetApp);
+    // --- Birthday Screen Logic ---
+    function initBirthdayScreen() {
+        createDynamicElements(birthdayScreen.querySelector('.background-elements'), 150, 'confetti');
+        const heartContainer = birthdayScreen.querySelector('.heart-container');
+        heartContainer.innerHTML = '';
+        for (let i = 0; i < 5; i++) {
+            const heart = document.createElement('div');
+            heart.className = 'heart-icon';
+            heart.innerHTML = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="currentColor" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20.84 4.61a5.5 5.5 0 0 0-7.78 0L12 5.67l-1.06-1.06a5.5 5.5 0 0 0-7.78 7.78l1.06 1.06L12 21.23l7.78-7.78 1.06-1.06a5.5 5.5 0 0 0 0-7.78z"></path></svg>`;
+            heart.style.animationDelay = `${i * 0.2}s`;
+            heartContainer.appendChild(heart);
+        }
+    }
 
+    // --- Helper for Dynamic Background Elements ---
+    function createDynamicElements(container, count, type) {
+        container.innerHTML = '';
+        for (let i = 0; i < count; i++) {
+            const el = document.createElement('div');
+            el.className = type;
+            el.style.left = `${Math.random() * 100}%`;
+            el.style.animationDelay = `${Math.random() * 5}s`;
+            el.style.animationDuration = `${3 + Math.random() * 3}s`;
+            if(type === 'confetti'){
+                 el.style.backgroundColor = ['#ec4899', '#a855f7', '#3b82f6', '#fbbf24', '#ef4444'][i % 5];
+            }
+            container.appendChild(el);
+        }
+    }
 
-    // --- Initialization ---
-    buildWheel();
-    startTypingEffect();
+    // --- Initial Load ---
+    showScreen('entry');
 });
