@@ -3,86 +3,96 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>A Little Letter for You</title>
-    
-    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@400;700&family=Poppins:wght@300;400;500;600&display=swap" rel="stylesheet">
-    
+    <title>A Special Birthday Surprise</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Dancing+Script:wght@700&family=Lora:ital@0;1&display=swap" rel="stylesheet">
 </head>
 <body>
 
-    <div id="app-container" class="mood-day">
+    <div id="app-container">
 
-        <div id="entry-screen" class="section active">
+        <div id="entry-screen" class="screen day-theme">
+            <div class="background-elements"></div>
             <div class="content-wrapper">
-                <h1>A Little Letter for You 💌</h1>
-                <div class="card">
-                    <p class="letter-box" id="letter-text"></p>
+                <div class="title">
+                    <h1 class="font-georgia">My Letter to You,</h1>
+                    <h2 class="font-georgia">Sudeshna 💌</h2>
                 </div>
-                <div id="entry-options" class="options-container">
-                    <div class="options-title">✨ Special Option for You ✨</div>
-                    <div class="mood-buttons">
-                        <button id="mood-day-btn" class="mood-button day active">
-                            <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="4"/><path d="M12 2v2"/><path d="M12 20v2"/><path d="m4.93 4.93 1.41 1.41"/><path d="m17.66 17.66 1.41 1.41"/><path d="M2 12h2"/><path d="M20 12h2"/><path d="m6.34 17.66-1.41 1.41"/><path d="m19.07 4.93-1.41 1.41"/></svg>
-                            <span>Day</span>
-                        </button>
-                        <button id="mood-night-btn" class="mood-button night">
-                           <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 3a6 6 0 0 0 9 9 9 9 0 1 1-9-9Z"/></svg>
-                            <span>Night</span>
-                        </button>
-                        <button id="mood-favorite-btn" class="mood-button favorite">
-                           <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17.5 19H9a7 7 0 1 1 6.71-9h1.79a4.5 4.5 0 1 1 0 9Z"/></svg>
-                            <span>Your Favorite</span>
-                        </button>
-                    </div>
-                    <button id="start-reading-btn" class="main-button" style="background: linear-gradient(to right, #fb7185, #f43f5e);">
-                        Start Reading
-                    </button>
+                <div class="letter-box">
+                    <p id="letter-text" class="font-georgia"></p>
                 </div>
+                <div class="theme-switcher">
+                    <button id="day-btn" class="theme-btn active">☀️ DAY</button>
+                    <button id="night-btn" class="theme-btn">🌙 NIGHT</button>
+                </div>
+                <button id="start-reading-btn" class="action-btn" disabled>Start Reading</button>
             </div>
         </div>
 
-        <div id="surprise-section" class="section">
-            <div class="content-wrapper">
-                <h2>🎁 A Little Surprise 🎁</h2>
-                <div id="fortune-wheel-container">
-                    <div id="wheel-wrapper">
-                        <div id="wheel"></div>
-                        <div id="wheel-center"><div></div></div>
-                        <div id="wheel-pointer"></div>
-                    </div>
-                    <button id="spin-btn" class="main-button" style="background: linear-gradient(to right, #a855f7, #ec4899);">Spin Wheel</button>
-                    <div id="spin-result"></div>
+        <div id="surprise-screen" class="screen">
+            <div class="background-elements"></div>
+             <div class="content-wrapper">
+                <div class="fortune-wheel-container">
+                    <h2 class="font-cursive">Spin the Wheel 🎡</h2>
+                    <div id="wheel" class="wheel">
+                        </div>
+                    <div class="wheel-pointer"></div>
                 </div>
-                <button id="show-bubbles-btn" class="main-button" style="background: linear-gradient(to right, #38bdf8, #a78bfa);">Show Floating Bubbles</button>
-                <div id="bubbles-container" style="display: none;"></div>
-                <button id="surprise-next-btn" class="main-button" style="background: linear-gradient(to right, #fb7185, #f43f5e); display: none;">
-                    Next 
-                    <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14"/><path d="m12 5 7 7-7 7"/></svg>
-                </button>
+
+                <div class="balloon-game-container">
+                    <h3 class="font-cursive">Pop the Balloons! 🎈</h3>
+                    <div id="balloon-box" class="balloon-box">
+                        </div>
+                </div>
+
+                <button id="surprise-continue-btn" class="action-btn">Continue →</button>
             </div>
-        </div>
-        
-        <div id="countdown-section" class="section">
-            <div id="countdown-number"></div>
-        </div>
-
-        <div id="grand-reveal-section" class="section">
-            <h1 id="grand-reveal-heading" class="animated-heading">You’re the most special person in my life 💖</h1>
-        </div>
-
-        <div id="birthday-ending-section" class="section">
-            <div class="content-wrapper" style="gap: 2rem;">
-                 <h1 id="birthday-heading" class="animated-heading">🌸✨ HAPPY BIRTHDAY ✨🌸</h1>
-                 <div class="card animate-delay-in delay-1">
-                    <p>I hope this little letter makes your day brighter, just like you make mine every day. ✨</p>
+             <button id="hidden-lock-btn" class="hidden-lock">
+                <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+             </button>
+             <div id="hidden-note-modal" class="modal-overlay hidden">
+                 <div class="modal-content font-cursive">
+                    <p>This one's just for you: You're the reason I smile more than I admit 💖</p>
                  </div>
-                 <button id="replay-btn" class="main-button animate-delay-in delay-2" style="background: linear-gradient(to right, #a855f7, #ec4899);">
-                    <svg class="lucide-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"/><path d="M3 3v5h5"/></svg>
-                    Replay Surprise 🎁
-                 </button>
+             </div>
+        </div>
+
+        <div id="countdown-screen" class="screen">
+            <div class="background-elements"></div>
+            <div class="content-wrapper">
+                <div id="countdown-number" class="countdown-number">3</div>
             </div>
         </div>
+
+        <div id="reveal-screen" class="screen">
+            <div class="background-elements"></div>
+            <div class="content-wrapper">
+                <div class="reveal-box">
+                    <h1>You're the most special person in my life 💖</h1>
+                    <p class="font-georgia">Every moment with you is a treasure ✨</p>
+                </div>
+                <button id="reveal-continue-btn" class="action-btn">Continue to Surprise →</button>
+            </div>
+        </div>
+
+        <div id="birthday-screen" class="screen">
+            <div class="background-elements"></div>
+            <div class="content-wrapper">
+                 <div class="cake-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="96" height="96" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-8a2 2 0 0 0-2-2H6a2 2 0 0 0-2 2v8"/><path d="M4 16c-1.1 0-2-.9-2-2V4c0-1.1.9-2 2-2h16c1.1 0 2 .9 2 2v10c0 1.1-.9 2-2 2H4Z"/><path d="M16 8v4"/><path d="M12 8v4"/><path d="M8 8v4"/><path d="M2 16h20"/></svg>
+                 </div>
+                 <h1 class="birthday-title font-georgia">🌸✨ HAPPY BIRTHDAY ✨🌸</h1>
+                 <div class="birthday-message-box">
+                    <p class="font-georgia">I hope this little letter makes your day brighter, just like you make mine every day.</p>
+                     <div class="heart-container">
+                         </div>
+                 </div>
+                 <p class="wishing-text font-cursive">Wishing you all the happiness in the world 🎂✨</p>
+            </div>
+        </div>
+
     </div>
 
     <script src="script.js"></script>
